@@ -67,6 +67,10 @@ export async function getByID(client: PoolClient, id: string) {
     [id],
   );
 
+  if (result.rows.length === 0) {
+    return null;
+  }
+
   return <Document>{
     id: result.rows[0].id,
     user_id: result.rows[0].user_id,
