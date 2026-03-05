@@ -42,7 +42,7 @@ export async function create(
   contentType: string,
 ) {
   const result = await client.query(
-    `INSERT INTO documents (user_id, file_name, file_path, content_type) VALUES ($1, $2, $3, $4)
+    `INSERT INTO documents (user_id, file_name, file_path, content_type, file_size) VALUES ($1, $2, $3, $4, 0)
       RETURNING id, file_name, file_path, content_type, file_size, status, uploaded_at, updated_at, created_at`,
     [userId, fileName, filePath, contentType],
   );
@@ -113,7 +113,7 @@ export async function update(
     args.push(req.fileSize);
   }
 
-  query += `WHERE id = $${++argsNum} RETURNING id, user_id, file_name, file_path, file_size,
+  query += ` WHERE id = $${++argsNum} RETURNING id, user_id, file_name, file_path, file_size,
       content_type, COALESCE(checksum, '') as checksum, status, uploaded_at, updated_at, created_at`;
   args.push(id);
 

@@ -18,7 +18,7 @@ CREATE TABLE documents (
     file_size INTEGER NOT NULL,
     content_type TEXT NOT NULL,
     checksum TEXT,
-    status status DEFAULT 'pending',
+    status doc_status DEFAULT 'pending',
     uploaded_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

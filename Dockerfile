@@ -6,33 +6,30 @@ RUN npm install
 COPY client/ ./
 RUN npm run build
 
-FROM golang:1.25-alpine AS builder
+FROM node:24-alpine AS server-builder
 
-WORKDIR /app
+WORKDIR /app/server
+COPY server/package*.json server/package-lock.json ./
+RUN npm install
 
-RUN apk add --no-cache git
+COPY server/src ./src
+COPY server/tsconfig.json server/tsconfig-build.json ./
 
-COPY server/go.mod server/go.sum ./
-RUN go mod download
-
-COPY server/ ./
-
-RUN go mod tidy
-
-RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/server
+RUN npx tsc -p tsconfig-build.json
 
 FROM alpine:3.19
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates nodejs
 
 WORKDIR /app
 
 COPY --from=client-builder /app/client/dist ./client/dist
-COPY --from=builder /server ./
+COPY --from=server-builder /app/server/dist ./server/dist
+COPY --from=server-builder /app/server/node_modules ./server/node_modules
 
 ENV FILE_STORAGE_PATH=/file_store
 ENV POSTGRES_HOST=db
 
 EXPOSE 3000
 
-CMD ["./server"]
+CMD ["node", "server/dist/app.js"]
