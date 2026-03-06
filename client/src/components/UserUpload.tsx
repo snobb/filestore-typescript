@@ -47,7 +47,7 @@ export function UserUpload() {
     setError(null);
 
     try {
-      const { id, upload_url } = await uploadPending(
+      const { upload_url, status_url } = await uploadPending(
         selectedFile.name,
         selectedFile.type,
       );
@@ -55,7 +55,7 @@ export function UserUpload() {
       const fileInfo = await uploadFile(upload_url, selectedFile);
 
       await updateDocumentStatus(
-        id,
+        status_url,
         "uploaded",
         fileInfo.file_size,
         fileInfo.check_sum,

@@ -27,6 +27,27 @@ export interface FileInfo {
   file_size: number;
 }
 
+export async function requestRaw<T>(
+  url: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-ID": USER_ID,
+      ...options.headers,
+    },
+  });
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ error: "Request failed" }));
+    throw new Error(error.error || "Request failed");
+  }
+  return response.json();
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
@@ -64,12 +85,12 @@ export async function uploadPending(
 }
 
 export async function updateDocumentStatus(
-  id: string,
+  status_url: string,
   status: string,
   fileSize: number,
   checksum: string,
 ): Promise<Document> {
-  return request<Document>(`/api/documents/${id}/status`, {
+  return request<Document>(status_url, {
     method: "PATCH",
     body: JSON.stringify({ status, file_size: fileSize, checksum }),
   });
