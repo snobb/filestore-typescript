@@ -2,10 +2,17 @@ import { Pool } from 'pg';
 import { create, Document, getByID, getByUserID, update, UpdateRequest } from './document.db';
 
 export const documentService = {
-    async create(pg: Pool, userId: string, fileName: string, filePath: string, contentType: string): Promise<Document> {
+    async create(
+        pg: Pool,
+        fileId: string,
+        userId: string,
+        fileName: string,
+        filePath: string,
+        contentType: string,
+    ): Promise<Document> {
         const client = await pg.connect();
         try {
-            return await create(client, userId, fileName, filePath, contentType);
+            return await create(client, fileId, userId, fileName, filePath, contentType);
         } finally {
             client.release();
         }

@@ -27,6 +27,7 @@ describe('document.db', () => {
 
             const result = await create(
                 mockClient as any,
+                'file-uuid',
                 'user-uuid',
                 'test.pdf',
                 '/user/test.pdf',

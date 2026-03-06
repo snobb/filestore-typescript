@@ -36,15 +36,22 @@ export interface UpdateRequest {
 
 export async function create(
     client: PoolClient,
+    fileId: string,
     userId: string,
     fileName: string,
     filePath: string,
     contentType: string,
 ) {
     const result = await client.query(
-        `INSERT INTO documents (user_id, file_name, file_path, content_type, file_size) VALUES ($1, $2, $3, $4, 0)
-      RETURNING id, file_name, file_path, content_type, file_size, status, uploaded_at, updated_at, created_at`,
-        [userId, fileName, filePath, contentType],
+        `INSERT INTO documents (id, user_id, file_name, file_path, content_type, file_size) VALUES ($1, $2, $3, $4, $5, 0)
+        ON CONFLICT (user_id, file_name)
+        DO UPDATE SET
+            file_path = EXCLUDED.file_path,
+            content_type = EXCLUDED.content_type,
+            file_size = EXCLUDED.file_size,
+            updated_at = NOW()
+      RETURNING id, file_name, file_path, file_size, content_type, updated_at, created_at`,
+        [fileId, userId, fileName, filePath, contentType],
     );
 
     return <Document>{
@@ -55,7 +62,6 @@ export async function create(
         file_size: result.rows[0].file_size || 0,
         content_type: result.rows[0].content_type,
         status: 'pending',
-        uploaded_at: result.rows[0].uploaded_at,
         updated_at: result.rows[0].updated_at,
         created_at: result.rows[0].created_at,
     };

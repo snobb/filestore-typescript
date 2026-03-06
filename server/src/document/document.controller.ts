@@ -62,7 +62,7 @@ export async function uploadPendingHandler(
 
     try {
         const pg = getPool(request);
-        const doc = await documentService.create(pg, userID, file_name, storePath, content_type);
+        const doc = await documentService.create(pg, fileID, userID, file_name, storePath, content_type);
 
         const response: UploadPendingResponse = {
             id: doc.id,
