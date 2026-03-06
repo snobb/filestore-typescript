@@ -32,4 +32,4 @@ ENV POSTGRES_HOST=db
 
 EXPOSE 3000
 
-CMD ["node", "server/dist/app.js"]
+CMD ["node", "--enable-source-maps", "server/dist/app.js"]
