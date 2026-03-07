@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "dbmate": "^2.31.0"
+  },
+  "scripts": {
+    "db:up": "./scripts/migrations_db_up.sh",
+    "db:down": "./scripts/migrations_db_down.sh",
+    "db:migrate": "./scripts/migrations_db_migrate.sh",
+    "db:rollback": "./scripts/migrations_db_rollback.sh",
+    "db:create": "./scripts/migrations_db_create.sh",
+    "db:drop": "./scripts/migrations_db_drop.sh"
+  }
+}
