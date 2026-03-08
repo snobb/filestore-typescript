@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it, mock } from 'node:test';
-import { documentService } from './document.service';
+import { Service } from './document.service';
 
 describe('document.service', () => {
     describe('create', () => {
@@ -24,13 +24,8 @@ describe('document.service', () => {
                 ),
             };
 
-            const result = await documentService.create(
-                mockPool as any,
-                'user-uuid',
-                'test.pdf',
-                '/user/test.pdf',
-                'application/pdf',
-            );
+            const service = new Service(mockPool as any);
+            const result = await service.create('user-uuid', 'test.pdf', '/user/test.pdf', 'application/pdf');
 
             assert.equal(result.id, 'test-uuid');
             assert.equal(result.status, 'pending');
@@ -49,7 +44,8 @@ describe('document.service', () => {
                 ),
             };
 
-            const result = await documentService.getByID(mockPool as any, 'doc-uuid');
+            const service = new Service(mockPool as any);
+            const result = await service.getByID('doc-uuid');
 
             assert.equal(result?.id, 'doc-uuid');
         });
@@ -64,7 +60,8 @@ describe('document.service', () => {
                 ),
             };
 
-            const result = await documentService.getByID(mockPool as any, 'nonexistent');
+            const service = new Service(mockPool as any);
+            const result = await service.getByID('nonexistent');
 
             assert.equal(result, null);
         });
@@ -79,7 +76,8 @@ describe('document.service', () => {
                 ),
             };
 
-            const result = await documentService.getByID(mockPool as any, 'doc-uuid');
+            const service = new Service(mockPool as any);
+            const result = await service.getByID('doc-uuid');
 
             assert.equal(result, null);
         });
@@ -100,7 +98,8 @@ describe('document.service', () => {
                 ),
             };
 
-            const result = await documentService.getByUserID(mockPool as any, 'user-uuid');
+            const service = new Service(mockPool as any);
+            const result = await service.getByUserID('user-uuid');
 
             assert.equal(result.length, 2);
         });
@@ -118,7 +117,8 @@ describe('document.service', () => {
                 ),
             };
 
-            const result = await documentService.update(mockPool as any, 'doc-uuid', { status: 'uploaded' });
+            const service = new Service(mockPool as any);
+            const result = await service.update('doc-uuid', { status: 'uploaded' });
 
             assert.equal(result.status, 'uploaded');
         });

@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { Pool } from 'pg';
 import { DocumentStatus, UpdateRequest } from './document.db';
-import { documentService } from './document.service';
+import { Service as DocumentService } from './document.service';
 
 export interface UploadPendingRequest {
     file_name: string;
@@ -62,7 +62,8 @@ export async function uploadPendingHandler(
 
     try {
         const pg = getPool(request);
-        const doc = await documentService.create(pg, fileID, userID, file_name, storePath, content_type);
+        const service = new DocumentService(pg);
+        const doc = await service.create(fileID, userID, file_name, storePath, content_type);
 
         const response: UploadPendingResponse = {
             id: doc.id,
@@ -92,9 +93,10 @@ export async function updateDocumentStatusHandler(
     const { id } = request.params;
     const { status, file_size, checksum } = request.body;
     const pg = getPool(request);
+    const service = new DocumentService(pg);
 
     try {
-        const doc = await documentService.getByID(pg, id);
+        const doc = await service.getByID(id);
         if (!doc) {
             return sendError(reply, 404, 'document not found');
         }
@@ -109,7 +111,7 @@ export async function updateDocumentStatusHandler(
             checksum,
         };
 
-        const updatedDoc = await documentService.update(pg, id, updateReq);
+        const updatedDoc = await service.update(id, updateReq);
 
         reply.code(200).send(updatedDoc);
     } catch (err) {
@@ -126,9 +128,10 @@ export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDo
 
     const { id } = request.params;
     const pg = getPool(request);
+    const service = new DocumentService(pg);
 
     try {
-        const doc = await documentService.getByID(pg, id);
+        const doc = await service.getByID(id);
         if (!doc) {
             return sendError(reply, 404, 'document not found');
         }
@@ -151,9 +154,10 @@ export async function listDocumentsHandler(request: FastifyRequest, reply: Fasti
     }
 
     const pg = getPool(request);
+    const service = new DocumentService(pg);
 
     try {
-        const docs = await documentService.getByUserID(pg, userID);
+        const docs = await service.getByUserID(userID);
         reply.code(200).send(docs || []);
     } catch (err) {
         request.server.log.error(err);

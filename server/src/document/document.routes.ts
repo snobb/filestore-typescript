@@ -8,11 +8,11 @@ import {
     uploadPendingHandler,
 } from './document.controller';
 import { $ref, documentSchemas } from './document.schema';
-import { documentService } from './document.service';
+import { Service as DocumentService } from './document.service';
 
 declare module 'fastify' {
     interface FastifyInstance {
-        documentService: typeof documentService;
+        documentService: typeof DocumentService;
         fileStore: FileStore;
     }
 }
@@ -20,7 +20,7 @@ declare module 'fastify' {
 const documentPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     const fileStore = new DiskFileStore(process.env.FILE_STORAGE_PATH || '/filestore');
     fastify.decorate('fileStore', fileStore);
-    fastify.decorate('documentService', documentService);
+    fastify.decorate('documentService', DocumentService);
 };
 
 export default fp(documentPlugin);
