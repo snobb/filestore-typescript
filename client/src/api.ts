@@ -1,6 +1,9 @@
 const API_BASE = "";
 
-const USER_ID = "00000000-0000-0000-0000-000000000000";
+function getStoredUser() {
+  const stored = localStorage.getItem("auth_user");
+  return stored ? JSON.parse(stored) : null;
+}
 
 export interface Document {
   id: string;
@@ -31,11 +34,14 @@ export async function requestRaw<T>(
   url: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const user = getStoredUser();
+  const userId = user?.user_id || "";
+
   const response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "X-User-ID": USER_ID,
+      "X-User-ID": userId,
       ...options.headers,
     },
   });
@@ -49,11 +55,14 @@ export async function requestRaw<T>(
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const user = getStoredUser();
+  const userId = user?.user_id || "";
+
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "X-User-ID": USER_ID,
+      "X-User-ID": userId,
       ...options.headers,
     },
   });
@@ -100,10 +109,13 @@ export async function uploadFile(
   uploadUrl: string,
   file: File,
 ): Promise<FileInfo> {
+  const user = getStoredUser();
+  const userId = user?.user_id || "";
+
   const response = await fetch(`${API_BASE}${uploadUrl}`, {
     method: "POST",
     headers: {
-      "X-User-ID": USER_ID,
+      "X-User-ID": userId,
     },
     body: file,
   });

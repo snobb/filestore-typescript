@@ -24,14 +24,6 @@ export interface GetDocumentParams {
     id: string;
 }
 
-function getUserID(request: FastifyRequest): string | null {
-    const userID = request.headers['x-user-id'];
-    if (!userID || Array.isArray(userID)) {
-        return null;
-    }
-    return userID;
-}
-
 function getPool(request: FastifyRequest): Pool {
     return request.server.pg as unknown as Pool;
 }
@@ -44,10 +36,9 @@ export async function uploadPendingHandler(
     request: FastifyRequest<{ Body: UploadPendingRequest }>,
     reply: FastifyReply,
 ) {
-    const userID = getUserID(request);
-    if (!userID) {
-        return sendError(reply, 401, 'unauthorized');
-    }
+    await request.server.authenticate(request, reply);
+
+    const userID = request.user.userId;
 
     const { file_name, content_type } = request.body;
 
@@ -85,10 +76,9 @@ export async function updateDocumentStatusHandler(
     }>,
     reply: FastifyReply,
 ) {
-    const userID = getUserID(request);
-    if (!userID) {
-        return sendError(reply, 401, 'unauthorized');
-    }
+    await request.server.authenticate(request, reply);
+
+    const userID = request.user.userId;
 
     const { id } = request.params;
     const { status, file_size, checksum } = request.body;
@@ -121,10 +111,9 @@ export async function updateDocumentStatusHandler(
 }
 
 export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDocumentParams }>, reply: FastifyReply) {
-    const userID = getUserID(request);
-    if (!userID) {
-        return sendError(reply, 401, 'unauthorized');
-    }
+    await request.server.authenticate(request, reply);
+
+    const userID = request.user.userId;
 
     const { id } = request.params;
     const pg = getPool(request);
@@ -148,10 +137,9 @@ export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDo
 }
 
 export async function listDocumentsHandler(request: FastifyRequest, reply: FastifyReply) {
-    const userID = getUserID(request);
-    if (!userID) {
-        return sendError(reply, 401, 'unauthorized');
-    }
+    await request.server.authenticate(request, reply);
+
+    const userID = request.user.userId;
 
     const pg = getPool(request);
     const service = new DocumentService(pg);

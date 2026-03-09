@@ -3,17 +3,21 @@ import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
 import path from 'path';
 import dbConnector from './dbconnector';
+import authPlugin from './auth';
 import { documentRoutes } from './document/document.routes';
 import { filestoreRoutes } from './filestore/filestore.routes';
+import { userRoutes } from './user/user.routes';
 
 const fastify = Fastify({ logger: true });
 
 fastify.register(dbConnector);
+fastify.register(authPlugin);
 
 fastify.register(fastifyMultipart);
 
 fastify.register(filestoreRoutes);
 fastify.register(documentRoutes);
+fastify.register(userRoutes);
 
 fastify.register(fastifyStatic, {
     root: path.resolve(__dirname, '../../client/dist'),
