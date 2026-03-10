@@ -1,8 +1,7 @@
 const API_BASE = "";
 
-function getStoredUser() {
-  const stored = localStorage.getItem("auth_user");
-  return stored ? JSON.parse(stored) : null;
+function getStoredToken() {
+  return localStorage.getItem("auth_token");
 }
 
 export interface Document {
@@ -34,14 +33,13 @@ export async function requestRaw<T>(
   url: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const user = getStoredUser();
-  const userId = user?.user_id || "";
+  const token = getStoredToken();
 
   const response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "X-User-ID": userId,
+      ...(token && { "Authorization": `Bearer ${token}` }),
       ...options.headers,
     },
   });
@@ -55,14 +53,13 @@ export async function requestRaw<T>(
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const user = getStoredUser();
-  const userId = user?.user_id || "";
+  const token = getStoredToken();
 
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "X-User-ID": userId,
+      ...(token && { "Authorization": `Bearer ${token}` }),
       ...options.headers,
     },
   });
@@ -109,13 +106,12 @@ export async function uploadFile(
   uploadUrl: string,
   file: File,
 ): Promise<FileInfo> {
-  const user = getStoredUser();
-  const userId = user?.user_id || "";
+  const token = getStoredToken();
 
   const response = await fetch(`${API_BASE}${uploadUrl}`, {
     method: "POST",
     headers: {
-      "X-User-ID": userId,
+      ...(token && { "Authorization": `Bearer ${token}` }),
     },
     body: file,
   });

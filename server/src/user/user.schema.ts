@@ -2,18 +2,18 @@ import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
 export const registerRequestSchema = z.object({
-    email: z.string().email(),
+    email: z.email(),
     password: z.string().min(8),
 });
 
 export const loginRequestSchema = z.object({
-    email: z.string().email(),
+    email: z.email(),
     password: z.string(),
 });
 
 export const authResponseSchema = z.object({
     user_id: z.uuid(),
-    email: z.string().email(),
+    email: z.email(),
 });
 
 export const errorSchema = z.object({

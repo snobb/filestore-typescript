@@ -27,7 +27,10 @@ db-migrate-up: ## Migrate the database
 db-migrate-down: ## Rollback the database
 	./scripts/migrations_db_rollback.sh
 
-.PHONY: db-create db-new
+.PHONY: db-new
+db-new: db-create ## Create a new migration
+
+.PHONY: db-create
 db-new: ## Create a new migration
 db-create: ## Create a new migration
 	@if [ -z "$(NAME)" ]; then \

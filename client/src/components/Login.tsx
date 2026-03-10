@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export function Login() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isRegister, setIsRegister] = useState(false);
@@ -18,7 +19,7 @@ export function Login() {
 
     try {
       if (isRegister) {
-        await register(email, password);
+        await register(email, username, password);
       } else {
         await login(email, password);
       }
@@ -73,6 +74,25 @@ export function Login() {
             style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
           />
         </div>
+
+        {isRegister && (
+          <div style={{ marginBottom: "1rem" }}>
+            <label
+              htmlFor="username"
+              style={{ display: "block", marginBottom: "0.5rem" }}
+            >
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
+            />
+          </div>
+        )}
 
         <div style={{ marginBottom: "1rem" }}>
           <label

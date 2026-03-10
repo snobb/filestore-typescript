@@ -1,6 +1,10 @@
 import { Pool } from 'pg';
 import crypto from 'node:crypto';
 import { create, getByEmail, getByID, User } from './user.db';
+import argon2 from 'argon2';
+
+const defaultMemory = 65536;
+const defaultThreads = 2;
 
 const pepper = (() => {
     const p = process.env.DATABASE_PEPPER;
@@ -11,14 +15,31 @@ const pepper = (() => {
     return p;
 })();
 
+interface VerifyPasswordRequest {
+    password: string;
+    salt: string;
+    hash: string;
+    iterations: number;
+    memory?: number;
+    threads?: number;
+}
+
+export interface HashPasswordResponse {
+    hash: string;
+    salt: string;
+    iterations: number;
+    memory: number;
+    threads: number;
+}
+
 export class Service {
     constructor(private db: Pool) {}
 
     async create(email: string, password: string): Promise<User> {
-        const { hash, salt, iterations } = hashPassword(password);
+        const { hash, salt, iterations, memory, threads } = await hashPassword(password);
         const client = await this.db.connect();
         try {
-            return await create(client, email, hash, salt, iterations);
+            return await create(client, email, hash, salt, iterations, memory, threads);
         } finally {
             client.release();
         }
@@ -67,28 +88,51 @@ export class Service {
     }
 }
 
-function hashPassword(password: string, iterations: number = 21000) {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(password + pepper, salt, iterations, 64, 'sha512').toString('hex');
-    return { hash, salt, iterations };
+/**
+ * Generates an Argon2id hash.
+ * Returns the hash, salt, and iterations as requested.
+ * Note: Memory and Parallelism are kept as internal constants.
+ */
+export async function hashPassword(password: string, iterations: number = 3): Promise<HashPasswordResponse> {
+    const salt = crypto.randomBytes(16);
+
+    const memoryCost = defaultMemory;
+    const parallelism = defaultThreads;
+
+    const hash = await argon2.hash(password + pepper, {
+        type: argon2.argon2id,
+        timeCost: iterations,
+        memoryCost: memoryCost,
+        parallelism: parallelism,
+        salt: salt,
+        raw: true, // raw Buffer to convert to hex manually
+    });
+
+    return {
+        hash: hash.toString('hex'),
+        salt: salt.toString('hex'),
+        iterations: iterations,
+        memory: memoryCost,
+        threads: parallelism,
+    };
 }
 
-function verifyPassword({
-    password,
-    salt,
-    hash,
-    iterations,
-}: {
-    password: string;
-    salt: string;
-    hash: string;
-    iterations: number;
-}) {
-    const candidateHash = crypto.pbkdf2Sync(password + pepper, salt, iterations, 64, 'sha512').toString('hex');
+export async function verifyPassword({ password, salt, hash, iterations, memory, threads }: VerifyPasswordRequest) {
+    const saltBuffer = Buffer.from(salt, 'hex');
+    const hashBuffer = Buffer.from(hash, 'hex');
 
-    if (candidateHash.length !== hash.length) {
-        return false;
-    }
+    memory = memory || defaultMemory;
+    threads = threads || defaultThreads;
 
-    return crypto.timingSafeEqual(Buffer.from(candidateHash), Buffer.from(hash));
+    // Verify the hash - must use exact parameters including memory and parallelism.
+    const candidateHash = await argon2.hash(password + pepper, {
+        type: argon2.argon2id,
+        timeCost: iterations,
+        memoryCost: memory,
+        parallelism: threads,
+        salt: saltBuffer,
+        raw: true,
+    });
+
+    return crypto.timingSafeEqual(hashBuffer, candidateHash);
 }
