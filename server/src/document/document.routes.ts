@@ -7,7 +7,16 @@ import {
     updateDocumentStatusHandler,
     uploadPendingHandler,
 } from './document.controller.ts';
-import { $ref, documentSchemas } from './document.schema.ts';
+import {
+    errorSchema,
+    getDocumentParamsSchema,
+    getDocumentResponseSchema,
+    listDocumentsResponseSchema,
+    updateStatusRequestSchema,
+    updateStatusResponseSchema,
+    uploadPendingRequestSchema,
+    uploadPendingResponseSchema,
+} from './document.schema.ts';
 import { Service as DocumentService } from './document.service.ts';
 
 const documentPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
@@ -19,9 +28,14 @@ const documentPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 export default fp(documentPlugin);
 
 export async function documentRoutes(server: FastifyInstance) {
-    for (const schema of documentSchemas) {
-        server.addSchema(schema);
-    }
+    server.addSchema(uploadPendingRequestSchema);
+    server.addSchema(uploadPendingResponseSchema);
+    server.addSchema(updateStatusRequestSchema);
+    server.addSchema(updateStatusResponseSchema);
+    server.addSchema(errorSchema);
+    server.addSchema(getDocumentParamsSchema);
+    server.addSchema(getDocumentResponseSchema);
+    server.addSchema(listDocumentsResponseSchema);
 
     await server.register(documentPlugin);
 
@@ -29,10 +43,10 @@ export async function documentRoutes(server: FastifyInstance) {
         '/api/documents',
         {
             schema: {
-                body: $ref('uploadPendingRequest'),
+                body: uploadPendingRequestSchema,
                 response: {
-                    200: $ref('uploadPendingResponse'),
-                    400: $ref('error'),
+                    200: uploadPendingResponseSchema,
+                    400: errorSchema,
                 },
             },
         },
@@ -42,10 +56,10 @@ export async function documentRoutes(server: FastifyInstance) {
         '/api/documents/:id/status',
         {
             schema: {
-                body: $ref('updateStatusRequest'),
+                body: updateStatusRequestSchema,
                 response: {
-                    200: $ref('updateStatusResponse'),
-                    500: $ref('error'),
+                    200: updateStatusResponseSchema,
+                    500: errorSchema,
                 },
             },
         },
@@ -55,10 +69,10 @@ export async function documentRoutes(server: FastifyInstance) {
         '/api/documents/:id',
         {
             schema: {
-                params: $ref('getDocumentParams'),
+                params: getDocumentParamsSchema,
                 response: {
-                    200: $ref('getDocumentResponse'),
-                    404: $ref('error'),
+                    200: getDocumentResponseSchema,
+                    404: errorSchema,
                 },
             },
         },
@@ -69,7 +83,7 @@ export async function documentRoutes(server: FastifyInstance) {
         {
             schema: {
                 response: {
-                    200: $ref('listDocumentsResponse'),
+                    200: listDocumentsResponseSchema,
                 },
             },
         },

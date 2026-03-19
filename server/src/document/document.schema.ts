@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
 export const uploadPendingRequestSchema = z.object({
     file_name: z.string(),
@@ -37,7 +36,7 @@ export const errorSchema = z.object({
 });
 
 export const getDocumentParamsSchema = z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
 });
 
 export const getDocumentResponseSchema = z.object({
@@ -55,40 +54,3 @@ export const getDocumentResponseSchema = z.object({
 });
 
 export const listDocumentsResponseSchema = z.array(getDocumentResponseSchema);
-
-export const documentSchemas = [
-    {
-        $id: 'documentSchemas.uploadPendingRequestSchema',
-        ...zodToJsonSchema(uploadPendingRequestSchema as any),
-    },
-    {
-        $id: 'documentSchemas.uploadPendingResponseSchema',
-        ...zodToJsonSchema(uploadPendingResponseSchema as any),
-    },
-    {
-        $id: 'documentSchemas.updateStatusRequestSchema',
-        ...zodToJsonSchema(updateStatusRequestSchema as any),
-    },
-    {
-        $id: 'documentSchemas.updateStatusResponseSchema',
-        ...zodToJsonSchema(updateStatusResponseSchema as any),
-    },
-    {
-        $id: 'documentSchemas.errorSchema',
-        ...zodToJsonSchema(errorSchema as any),
-    },
-    {
-        $id: 'documentSchemas.getDocumentParamsSchema',
-        ...zodToJsonSchema(getDocumentParamsSchema as any),
-    },
-    {
-        $id: 'documentSchemas.getDocumentResponseSchema',
-        ...zodToJsonSchema(getDocumentResponseSchema as any),
-    },
-    {
-        $id: 'documentSchemas.listDocumentsResponseSchema',
-        ...zodToJsonSchema(listDocumentsResponseSchema as any),
-    },
-];
-
-export const $ref = (name: string) => ({ $ref: `documentSchemas.${name}Schema` });

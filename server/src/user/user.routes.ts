@@ -1,20 +1,21 @@
 import { type FastifyInstance } from 'fastify';
 import { loginHandler, registerHandler } from './user.controller.ts';
-import { $ref, userSchemas } from './user.schema.ts';
+import { registerRequestSchema, loginRequestSchema, authResponseSchema, errorSchema } from './user.schema.ts';
 
 export async function userRoutes(server: FastifyInstance) {
-    for (const schema of userSchemas) {
-        server.addSchema(schema);
-    }
+    server.addSchema(registerRequestSchema);
+    server.addSchema(loginRequestSchema);
+    server.addSchema(authResponseSchema);
+    server.addSchema(errorSchema);
 
     server.post(
         '/api/auth/register',
         {
             schema: {
-                body: $ref('registerRequest'),
+                body: registerRequestSchema,
                 response: {
-                    201: $ref('authResponse'),
-                    400: $ref('error'),
+                    201: authResponseSchema,
+                    400: errorSchema,
                 },
             },
         },
@@ -25,10 +26,10 @@ export async function userRoutes(server: FastifyInstance) {
         '/api/auth/login',
         {
             schema: {
-                body: $ref('loginRequest'),
+                body: loginRequestSchema,
                 response: {
-                    200: $ref('authResponse'),
-                    401: $ref('error'),
+                    200: authResponseSchema,
+                    401: errorSchema,
                 },
             },
         },

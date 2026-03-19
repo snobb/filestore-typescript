@@ -7,6 +7,7 @@ import authPlugin from './auth.ts';
 import { documentRoutes } from './document/document.routes.ts';
 import { filestoreRoutes } from './filestore/filestore.routes.ts';
 import { userRoutes } from './user/user.routes.ts';
+import { validatorCompiler, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 
 const fastify = Fastify({ logger: true });
 
@@ -18,6 +19,10 @@ fastify.register(fastifyMultipart);
 fastify.register(filestoreRoutes);
 fastify.register(documentRoutes);
 fastify.register(userRoutes);
+
+fastify.withTypeProvider<ZodTypeProvider>();
+fastify.setValidatorCompiler(validatorCompiler);
+fastify.setSerializerCompiler(serializerCompiler);
 
 fastify.register(fastifyStatic, {
     root: path.resolve(__dirname, '../../client/dist'),

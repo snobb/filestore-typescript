@@ -2,7 +2,7 @@ import { type FastifyInstance, type FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { DiskFileStore } from './disk.ts';
 import { DOWNLOAD_PREFIX, downloadHandler, UPLOAD_PREFIX, uploadHandler } from './filestore.controller.ts';
-import { $ref, filestoreSchemas } from './filestore.schema.ts';
+import { filestoreFileInfoSchema, errorSchema } from './filestore.schema.ts';
 
 const filestorePlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     const fileStore = new DiskFileStore(process.env['FILE_STORAGE_PATH'] || '/filestore');
@@ -16,9 +16,8 @@ const filestorePlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => 
 export default fp(filestorePlugin);
 
 export async function filestoreRoutes(server: FastifyInstance) {
-    for (const schema of filestoreSchemas) {
-        server.addSchema(schema);
-    }
+    server.addSchema(filestoreFileInfoSchema);
+    server.addSchema(errorSchema);
 
     await server.register(filestorePlugin);
 
@@ -27,9 +26,9 @@ export async function filestoreRoutes(server: FastifyInstance) {
         {
             schema: {
                 response: {
-                    200: $ref('fileInfo'),
-                    400: $ref('error'),
-                    500: $ref('error'),
+                    200: filestoreFileInfoSchema,
+                    400: errorSchema,
+                    500: errorSchema,
                 },
             },
         },
@@ -40,8 +39,8 @@ export async function filestoreRoutes(server: FastifyInstance) {
         {
             schema: {
                 response: {
-                    400: $ref('error'),
-                    404: $ref('error'),
+                    400: errorSchema,
+                    404: errorSchema,
                 },
             },
         },

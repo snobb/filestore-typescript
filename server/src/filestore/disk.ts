@@ -2,16 +2,16 @@ import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-export interface FileInfo {
+export type FileInfo = {
     path: string;
     check_sum: string;
     file_size: number;
-}
+};
 
-export interface FileStore {
+export type FileStore = {
     save(path: string, data: AsyncIterable<Uint8Array>): Promise<FileInfo>;
     diskPath(path: string): string;
-}
+};
 
 export class DiskFileStore implements FileStore {
     constructor(private baseDir: string) {}
