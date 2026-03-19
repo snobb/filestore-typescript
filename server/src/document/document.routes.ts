@@ -1,24 +1,17 @@
-import { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import { type FastifyInstance, type FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { DiskFileStore, FileStore } from '../filestore/disk';
+import { DiskFileStore } from '../filestore/disk.ts';
 import {
     getDocumentHandler,
     listDocumentsHandler,
     updateDocumentStatusHandler,
     uploadPendingHandler,
-} from './document.controller';
-import { $ref, documentSchemas } from './document.schema';
-import { Service as DocumentService } from './document.service';
-
-declare module 'fastify' {
-    interface FastifyInstance {
-        documentService: typeof DocumentService;
-        fileStore: FileStore;
-    }
-}
+} from './document.controller.ts';
+import { $ref, documentSchemas } from './document.schema.ts';
+import { Service as DocumentService } from './document.service.ts';
 
 const documentPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-    const fileStore = new DiskFileStore(process.env.FILE_STORAGE_PATH || '/filestore');
+    const fileStore = new DiskFileStore(process.env['FILE_STORAGE_PATH'] || '/filestore');
     fastify.decorate('fileStore', fileStore);
     fastify.decorate('documentService', DocumentService);
 };

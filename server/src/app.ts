@@ -2,11 +2,11 @@ import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
 import path from 'path';
-import dbConnector from './dbconnector';
-import authPlugin from './auth';
-import { documentRoutes } from './document/document.routes';
-import { filestoreRoutes } from './filestore/filestore.routes';
-import { userRoutes } from './user/user.routes';
+import dbConnector from './dbconnector.ts';
+import authPlugin from './auth.ts';
+import { documentRoutes } from './document/document.routes.ts';
+import { filestoreRoutes } from './filestore/filestore.routes.ts';
+import { userRoutes } from './user/user.routes.ts';
 
 const fastify = Fastify({ logger: true });
 

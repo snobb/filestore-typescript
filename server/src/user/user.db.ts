@@ -1,6 +1,6 @@
-import { PoolClient } from 'pg';
+import { type PoolClient } from 'pg';
 
-export interface User {
+export type User = {
     id: string;
     email: string;
     hashed_password: string;
@@ -8,7 +8,7 @@ export interface User {
     iterations: number;
     created_at: string;
     updated_at: string;
-}
+};
 
 export async function create(
     client: PoolClient,

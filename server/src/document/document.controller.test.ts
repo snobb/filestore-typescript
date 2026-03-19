@@ -5,7 +5,7 @@ import {
     listDocumentsHandler,
     updateDocumentStatusHandler,
     uploadPendingHandler,
-} from './document.controller';
+} from './document.controller.ts';
 
 describe('document.controller', () => {
     let mockReply: any;
@@ -19,6 +19,14 @@ describe('document.controller', () => {
         mockServer = {
             pg: {},
             log: { error: mock.fn() },
+            authenticate: async (request: any, reply: any) => {
+                const token = request.headers?.['authorization']?.replace('Bearer ', '');
+                const userId = request.headers?.['x-user-id'];
+                if (!token && !userId) {
+                    return reply.code(401).send({ error: 'unauthorized' });
+                }
+                request.user = { userId: userId || 'test-user' };
+            },
         };
     });
 

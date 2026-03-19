@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it, mock } from 'node:test';
-import { create, getByID, getByUserID, update } from './document.db';
+import { create, getByID, getByUserID, update } from './document.db.ts';
 
 describe('document.db', () => {
     describe('create', () => {
@@ -117,8 +117,8 @@ describe('document.db', () => {
             const result = await getByUserID(mockClient as any, 'user-uuid');
 
             assert.equal(result.length, 2);
-            assert.equal(result[0].id, 'doc-1');
-            assert.equal(result[1].id, 'doc-2');
+            assert.equal(result[0]?.id, 'doc-1');
+            assert.equal(result[1]?.id, 'doc-2');
         });
     });
 

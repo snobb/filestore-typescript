@@ -3,8 +3,8 @@ import assert from 'node:assert';
 import { beforeEach, describe, it, mock } from 'node:test';
 import * as os from 'os';
 import * as path from 'path';
-import { DiskFileStore } from './disk';
-import { DOWNLOAD_PREFIX, downloadHandler, UPLOAD_PREFIX, uploadHandler } from './filestore.controller';
+import { DiskFileStore } from './disk.ts';
+import { DOWNLOAD_PREFIX, downloadHandler, UPLOAD_PREFIX, uploadHandler } from './filestore.controller.ts';
 
 describe('filestore.controller', () => {
     let mockReply: any;

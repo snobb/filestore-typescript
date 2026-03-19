@@ -1,13 +1,13 @@
 import { Pool } from 'pg';
 import crypto from 'node:crypto';
-import { create, getByEmail, getByID, User } from './user.db';
+import { create, getByEmail, getByID, type User } from './user.db.ts';
 import argon2 from 'argon2';
 
 const defaultMemory = 65536;
 const defaultThreads = 2;
 
 const pepper = (() => {
-    const p = process.env.DATABASE_PEPPER;
+    const p = process.env['DATABASE_PEPPER'];
     if (!p || p.trim() === '') {
         console.error('CRITICAL ERROR: DATABASE_PEPPER environment variable is not set.');
         process.exit(1);
@@ -15,22 +15,22 @@ const pepper = (() => {
     return p;
 })();
 
-interface VerifyPasswordRequest {
+type VerifyPasswordRequest = {
     password: string;
     salt: string;
     hash: string;
     iterations: number;
     memory?: number;
     threads?: number;
-}
+};
 
-export interface HashPasswordResponse {
+export type HashPasswordResponse = {
     hash: string;
     salt: string;
     iterations: number;
     memory: number;
     threads: number;
-}
+};
 
 export class Service {
     constructor(private db: Pool) {}
@@ -49,7 +49,7 @@ export class Service {
         const client = await this.db.connect();
         try {
             return await getByEmail(client, email);
-        } catch (err) {
+        } catch {
             return null;
         } finally {
             client.release();
@@ -60,7 +60,7 @@ export class Service {
         const client = await this.db.connect();
         try {
             return await getByID(client, id);
-        } catch (err) {
+        } catch {
             return null;
         } finally {
             client.release();

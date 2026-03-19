@@ -1,22 +1,22 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 import { Pool } from 'pg';
-import { Service as UserService } from './user.service';
-import { generateToken } from '../auth';
+import { Service as UserService } from './user.service.ts';
+import { generateToken } from '../auth.ts';
 
-export interface RegisterRequest {
+export type RegisterRequest = {
     email: string;
     password: string;
-}
+};
 
-export interface LoginRequest {
+export type LoginRequest = {
     email: string;
     password: string;
-}
+};
 
-export interface AuthResponse {
+export type AuthResponse = {
     user_id: string;
     email: string;
-}
+};
 
 function getPool(request: FastifyRequest): Pool {
     return request.server.pg as unknown as Pool;
@@ -36,10 +36,7 @@ function setAuthCookie(reply: FastifyReply, token: string) {
     });
 }
 
-export async function registerHandler(
-    request: FastifyRequest<{ Body: RegisterRequest }>,
-    reply: FastifyReply,
-) {
+export async function registerHandler(request: FastifyRequest<{ Body: RegisterRequest }>, reply: FastifyReply) {
     const { email, password } = request.body;
 
     if (!email || !password) {
@@ -75,10 +72,7 @@ export async function registerHandler(
     }
 }
 
-export async function loginHandler(
-    request: FastifyRequest<{ Body: LoginRequest }>,
-    reply: FastifyReply,
-) {
+export async function loginHandler(request: FastifyRequest<{ Body: LoginRequest }>, reply: FastifyReply) {
     const { email, password } = request.body;
 
     if (!email || !password) {

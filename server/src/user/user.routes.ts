@@ -1,6 +1,6 @@
-import { FastifyInstance } from 'fastify';
-import { loginHandler, registerHandler } from './user.controller';
-import { $ref, userSchemas } from './user.schema';
+import { type FastifyInstance } from 'fastify';
+import { loginHandler, registerHandler } from './user.controller.ts';
+import { $ref, userSchemas } from './user.schema.ts';
 
 export async function userRoutes(server: FastifyInstance) {
     for (const schema of userSchemas) {

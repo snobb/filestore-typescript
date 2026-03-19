@@ -1,6 +1,6 @@
-import { PoolClient } from 'pg';
+import { type PoolClient } from 'pg';
 
-export interface Document {
+export type Document = {
     id: string;
     user_id: string;
     file_name: string;
@@ -12,27 +12,27 @@ export interface Document {
     uploaded_at?: string;
     updated_at?: string;
     created_at: string;
-}
+};
 
-export interface UploadPendingResponse {
+export type UploadPendingResponse = {
     id: string;
     upload_url: string;
     status_url: string;
-}
+};
 
-export interface FileInfo {
+export type FileInfo = {
     path: string;
     check_sum: string;
     file_size: number;
-}
+};
 
 export type DocumentStatus = 'pending' | 'uploaded' | 'verified';
 
-export interface UpdateRequest {
+export type UpdateRequest = {
     status?: DocumentStatus;
     checksum?: string;
     fileSize?: number;
-}
+};
 
 export async function create(
     client: PoolClient,
@@ -69,7 +69,8 @@ export async function create(
 
 export async function getByID(client: PoolClient, id: string) {
     const result = await client.query(
-        `SELECT id, user_id, file_name, file_path, file_size, content_type, status, uploaded_at, updated_at FROM documents WHERE id = $1`,
+        `SELECT id, user_id, file_name, file_path, file_size, content_type, status,
+        uploaded_at, updated_at FROM documents WHERE id = $1`,
         [id],
     );
 
@@ -92,7 +93,8 @@ export async function getByID(client: PoolClient, id: string) {
 
 export async function getByUserID(client: PoolClient, userID: string) {
     const result = await client.query(
-        `SELECT id, user_id, file_name, file_path, file_size, content_type, status, uploaded_at, updated_at FROM documents WHERE user_id = $1`,
+        `SELECT id, user_id, file_name, file_path, file_size, content_type, status,
+        uploaded_at, updated_at FROM documents WHERE user_id = $1`,
         [userID],
     );
 
@@ -101,7 +103,7 @@ export async function getByUserID(client: PoolClient, userID: string) {
 
 export async function update(client: PoolClient, id: string, req: UpdateRequest) {
     let query = `UPDATE documents SET updated_at = NOW()`;
-    let args: unknown[] = [];
+    const args: unknown[] = [];
     let argsNum = 0;
 
     if (req.status) {

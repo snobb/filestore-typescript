@@ -1,6 +1,6 @@
 BIN := ./node_modules/.bin
-TS_FILES := $(shell find src/ -name '*.ts')
-TEST_FILES := src/**/*.test.ts
+TS_FILES := ${shell find src/ -name '*.ts'}
+TEST_FILES := ${shell find src/ -name '*.test.ts'}
 
 all: dist
 
@@ -9,40 +9,39 @@ all: dist
 help:
 	@sed -n 's/^##//p' Makefile
 
-## run:		run application
-.PHONY: run
+## run:		run the program
 run: dist
-	@node --enable-source-maps dist/app.js
+	node --enable-source-maps ./dist/app.js
 
-## test:		run tests
+## test: 		run unit tests (if FILE env variable specified - run test for that file)
 .PHONY: test
-test: node_modules
-	node --test --experimental-test-coverage -r @swc-node/register src/**/*.test.ts src/**/**/*.test.ts
+ifdef FILE
+test: dist
+	node --test --experimental-transform-types --experimental-test-coverage ${FILE}
+	node --test-reporter=spec
+else
+test: dist
+	node --test --experimental-transform-types --experimental-test-coverage ${TEST_FILES}
+endif
 
-## test-watch:	run tests and watch for changes
-.PHONY: test-watch
-test-watch : node_modules
-	node --test --experimental-test-coverage --watch -r @swc-node/register src/**/*.test.ts src/**/**/*.test.ts
-
-## test-debug:	run tests in debugger (opens chrome)
-.PHONY: test-debug
-test-debug:
-	# MUST pass FILE variable like make test-debug FILE=./test.ts
-	open -a 'google chrome' chrome://inspect && \
-		node --nolazy --enable-source-maps --inspect-brk \
-		./node_modules/.bin/mocha -b -r ts-node/register --timeout 999999 ${FILE}
+.PHONY: clean-dist
+clean-dist:
+	-rm -rf dist
 
 ## clean: 	clean the project
 .PHONY: clean
-clean:
-	rm -rf coverage dist node_modules package-lock.json
+clean: clean-dist
+	-rm -rf coverage node_modules package-lock.json
 
-dist: node_modules $(TS_FILES) tsconfig.json
-	rm -rf dist
-	$(BIN)/tsc -p tsconfig-build.json
 
-node_modules: package.json package-lock.json
-	npm install || (rm -rf $@; exit 1)
+## dist:		build the project
+.PHONY: dist
+dist: clean-dist node_modules $(TS_FILES) tsconfig.json package.json
+	$(BIN)/tsc -p tsconfig-build.json || rm -rf dist
+
+.PHONY: node_modules
+node_modules: package-lock.json
+	npm install || (rm -rf node_modules; exit 1)
 	test -d $@ && touch $@ ||:
 
 package-lock.json:

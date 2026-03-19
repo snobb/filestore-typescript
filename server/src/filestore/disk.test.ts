@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { beforeEach, describe, it } from 'node:test';
 import * as os from 'os';
 import * as path from 'path';
-import { DiskFileStore } from './disk';
+import { DiskFileStore } from './disk.ts';
 
 describe('disk.ts', () => {
     let tempDir: string;

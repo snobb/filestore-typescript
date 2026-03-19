@@ -1,28 +1,28 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 import { Pool } from 'pg';
-import { DocumentStatus, UpdateRequest } from './document.db';
-import { Service as DocumentService } from './document.service';
+import { type DocumentStatus, type UpdateRequest } from './document.db.ts';
+import { Service as DocumentService } from './document.service.ts';
 
-export interface UploadPendingRequest {
+export type UploadPendingRequest = {
     file_name: string;
     content_type: string;
-}
+};
 
-export interface UploadPendingResponse {
+export type UploadPendingResponse = {
     id: string;
     upload_url: string;
     status_url: string;
-}
+};
 
-export interface UpdateStatusRequest {
+export type UpdateStatusRequest = {
     status: string;
     file_size: number;
     checksum: string;
-}
+};
 
-export interface GetDocumentParams {
+export type GetDocumentParams = {
     id: string;
-}
+};
 
 function getPool(request: FastifyRequest): Pool {
     return request.server.pg as unknown as Pool;
@@ -36,7 +36,14 @@ export async function uploadPendingHandler(
     request: FastifyRequest<{ Body: UploadPendingRequest }>,
     reply: FastifyReply,
 ) {
-    await request.server.authenticate(request, reply);
+    try {
+        await request.server.authenticate(request, reply);
+    } catch {
+        return sendError(reply, 401, 'unauthorized');
+    }
+    if (!request.user) {
+        return sendError(reply, 401, 'unauthorized');
+    }
 
     const userID = request.user.userId;
 
@@ -76,7 +83,14 @@ export async function updateDocumentStatusHandler(
     }>,
     reply: FastifyReply,
 ) {
-    await request.server.authenticate(request, reply);
+    try {
+        await request.server.authenticate(request, reply);
+    } catch {
+        return sendError(reply, 401, 'unauthorized');
+    }
+    if (!request.user) {
+        return sendError(reply, 401, 'unauthorized');
+    }
 
     const userID = request.user.userId;
 
@@ -111,7 +125,14 @@ export async function updateDocumentStatusHandler(
 }
 
 export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDocumentParams }>, reply: FastifyReply) {
-    await request.server.authenticate(request, reply);
+    try {
+        await request.server.authenticate(request, reply);
+    } catch {
+        return sendError(reply, 401, 'unauthorized');
+    }
+    if (!request.user) {
+        return sendError(reply, 401, 'unauthorized');
+    }
 
     const userID = request.user.userId;
 
@@ -137,7 +158,14 @@ export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDo
 }
 
 export async function listDocumentsHandler(request: FastifyRequest, reply: FastifyReply) {
-    await request.server.authenticate(request, reply);
+    try {
+        await request.server.authenticate(request, reply);
+    } catch {
+        return sendError(reply, 401, 'unauthorized');
+    }
+    if (!request.user) {
+        return sendError(reply, 401, 'unauthorized');
+    }
 
     const userID = request.user.userId;
 

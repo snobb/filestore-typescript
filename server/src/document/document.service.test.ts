@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it, mock } from 'node:test';
-import { Service } from './document.service';
+import { Service } from './document.service.ts';
 
 describe('document.service', () => {
     describe('create', () => {
@@ -25,7 +25,13 @@ describe('document.service', () => {
             };
 
             const service = new Service(mockPool as any);
-            const result = await service.create('user-uuid', 'test.pdf', '/user/test.pdf', 'application/pdf');
+            const result = await service.create(
+                'file-id',
+                'user-uuid',
+                'test.pdf',
+                '/user/test.pdf',
+                'application/pdf',
+            );
 
             assert.equal(result.id, 'test-uuid');
             assert.equal(result.status, 'pending');
