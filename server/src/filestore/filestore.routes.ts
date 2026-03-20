@@ -1,11 +1,20 @@
-import { type FastifyInstance, type FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { DiskFileStore } from './disk.ts';
-import { DOWNLOAD_PREFIX, downloadHandler, UPLOAD_PREFIX, uploadHandler } from './filestore.controller.ts';
-import { filestoreFileInfoSchema, errorSchema } from './filestore.schema.ts';
+import {
+    DOWNLOAD_PREFIX,
+    downloadHandler,
+    UPLOAD_PREFIX,
+    uploadHandler,
+} from './filestore.controller.ts';
+import { errorSchema, filestoreFileInfoSchema } from './filestore.schema.ts';
 
-const filestorePlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-    const fileStore = new DiskFileStore(process.env['FILE_STORAGE_PATH'] || '/filestore');
+const filestorePlugin: FastifyPluginAsync = async (
+    fastify: FastifyInstance,
+) => {
+    const fileStore = new DiskFileStore(
+        process.env['FILE_STORAGE_PATH'] || '/filestore',
+    );
     fastify.decorate('fileStore', fileStore);
 
     fastify.addContentTypeParser('*', (_request, payload, done) => {

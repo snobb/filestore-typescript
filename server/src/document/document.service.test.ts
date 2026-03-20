@@ -19,7 +19,9 @@ describe('document.service', () => {
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({
-                        query: mock.fn(() => Promise.resolve({ rows: [mockDoc] })),
+                        query: mock.fn(() =>
+                            Promise.resolve({ rows: [mockDoc] }),
+                        ),
                         release: mock.fn(),
                     }),
                 ),
@@ -55,7 +57,9 @@ describe('document.service', () => {
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({
-                        query: mock.fn(() => Promise.resolve({ rows: [mockDoc] })),
+                        query: mock.fn(() =>
+                            Promise.resolve({ rows: [mockDoc] }),
+                        ),
                         release: mock.fn(),
                     }),
                 ),
@@ -87,7 +91,9 @@ describe('document.service', () => {
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({
-                        query: mock.fn(() => Promise.reject(new Error('db error'))),
+                        query: mock.fn(() =>
+                            Promise.reject(new Error('db error')),
+                        ),
                         release: mock.fn(),
                     }),
                 ),
@@ -131,7 +137,9 @@ describe('document.service', () => {
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({
-                        query: mock.fn(() => Promise.resolve({ rows: mockDocs })),
+                        query: mock.fn(() =>
+                            Promise.resolve({ rows: mockDocs }),
+                        ),
                         release: mock.fn(),
                     }),
                 ),
@@ -162,14 +170,18 @@ describe('document.service', () => {
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({
-                        query: mock.fn(() => Promise.resolve({ rows: [mockDoc] })),
+                        query: mock.fn(() =>
+                            Promise.resolve({ rows: [mockDoc] }),
+                        ),
                         release: mock.fn(),
                     }),
                 ),
             };
 
             const service = new Service(mockPool as any);
-            const result = await service.update('doc-uuid', { status: 'uploaded' });
+            const result = await service.update('doc-uuid', {
+                status: 'uploaded',
+            });
 
             assert.equal(result.status, 'uploaded');
         });

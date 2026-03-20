@@ -1,5 +1,12 @@
-import { Pool } from 'pg';
-import { create, type Document, getByID, getByUserID, update, type UpdateRequest } from './document.db.ts';
+import type { Pool } from 'pg';
+import {
+    create,
+    type Document,
+    getByID,
+    getByUserID,
+    type UpdateRequest,
+    update,
+} from './document.db.ts';
 
 export class Service {
     constructor(private db: Pool) {}
@@ -13,7 +20,14 @@ export class Service {
     ): Promise<Document> {
         const client = await this.db.connect();
         try {
-            return await create(client, fileId, userId, fileName, filePath, contentType);
+            return await create(
+                client,
+                fileId,
+                userId,
+                fileName,
+                filePath,
+                contentType,
+            );
         } finally {
             client.release();
         }

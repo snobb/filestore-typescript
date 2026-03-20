@@ -1,6 +1,6 @@
-import { type FastifyReply, type FastifyRequest } from 'fastify';
+import type { Readable } from 'node:stream';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import * as fs from 'fs';
-import { Readable } from 'node:stream';
 
 export const UPLOAD_PREFIX = '/file_store/uploads';
 export const DOWNLOAD_PREFIX = '/file_store/downloads';
@@ -11,7 +11,10 @@ export type FileInfoResponse = {
     file_size: number;
 };
 
-export async function uploadHandler(request: FastifyRequest, reply: FastifyReply) {
+export async function uploadHandler(
+    request: FastifyRequest,
+    reply: FastifyReply,
+) {
     const urlPath = request.url;
     const filePath = urlPath.replace(UPLOAD_PREFIX, '');
     if (!filePath) {
@@ -24,10 +27,7 @@ export async function uploadHandler(request: FastifyRequest, reply: FastifyReply
         const fileStore = request.server.fileStore;
         const stream = request.body as Readable;
 
-        const info = await fileStore.save(
-            unescapedPath,
-            stream,
-        );
+        const info = await fileStore.save(unescapedPath, stream);
 
         reply.code(200).send(<FileInfoResponse>{
             path: info.path,
@@ -40,7 +40,10 @@ export async function uploadHandler(request: FastifyRequest, reply: FastifyReply
     }
 }
 
-export async function downloadHandler(request: FastifyRequest, reply: FastifyReply) {
+export async function downloadHandler(
+    request: FastifyRequest,
+    reply: FastifyReply,
+) {
     const urlPath = request.url;
     const filePath = decodeURIComponent(urlPath.replace(DOWNLOAD_PREFIX, ''));
     if (!filePath) {

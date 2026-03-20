@@ -1,6 +1,6 @@
-import * as fs from 'fs/promises';
 import assert from 'node:assert';
 import { beforeEach, describe, it } from 'node:test';
+import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 import { DiskFileStore } from './disk.ts';
@@ -15,7 +15,10 @@ describe('disk.ts', () => {
     describe('diskPath', () => {
         it('should return full path', () => {
             const store = new DiskFileStore('/base');
-            assert.equal(store.diskPath('user/file.pdf'), '/base/user/file.pdf');
+            assert.equal(
+                store.diskPath('user/file.pdf'),
+                '/base/user/file.pdf',
+            );
         });
     });
 
@@ -46,7 +49,9 @@ describe('disk.ts', () => {
 
             await store.save('nested/dir/file.txt', data);
 
-            const content = await fs.readFile(path.join(tempDir, 'nested/dir/file.txt'));
+            const content = await fs.readFile(
+                path.join(tempDir, 'nested/dir/file.txt'),
+            );
             assert.equal(content.toString(), 'content');
         });
 
@@ -59,7 +64,8 @@ describe('disk.ts', () => {
 
             const result = await store.save('checksum.txt', data);
 
-            const expectedChecksum = '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824';
+            const expectedChecksum =
+                '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824';
             assert.equal(result.checksum, expectedChecksum);
         });
 

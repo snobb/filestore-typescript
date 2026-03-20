@@ -1,7 +1,12 @@
-import { type FastifyInstance, type FastifyPluginAsync, type FastifyRequest, type FastifyReply } from 'fastify';
-import fp from 'fastify-plugin';
-import fastifyJwt from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
+import fastifyJwt from '@fastify/jwt';
+import type {
+    FastifyInstance,
+    FastifyPluginAsync,
+    FastifyReply,
+    FastifyRequest,
+} from 'fastify';
+import fp from 'fastify-plugin';
 
 const authPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     const jwtSecret = process.env['JWT_SECRET'];
@@ -18,21 +23,30 @@ const authPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
         },
     });
 
-    fastify.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
-        try {
-            const token = request.cookies['token'] || request.headers.authorization?.replace('Bearer ', '');
-            if (!token) {
+    fastify.decorate(
+        'authenticate',
+        async (request: FastifyRequest, reply: FastifyReply) => {
+            try {
+                const token =
+                    request.cookies['token'] ||
+                    request.headers.authorization?.replace('Bearer ', '');
+                if (!token) {
+                    return reply.code(401).send({ error: 'unauthorized' });
+                }
+                await request.jwtVerify();
+            } catch {
                 return reply.code(401).send({ error: 'unauthorized' });
             }
-            await request.jwtVerify();
-        } catch {
-            return reply.code(401).send({ error: 'unauthorized' });
-        }
-    });
+        },
+    );
 };
 
 export default fp(authPlugin);
 
-export function generateToken(fastify: FastifyInstance, userId: string, email: string): string {
+export function generateToken(
+    fastify: FastifyInstance,
+    userId: string,
+    email: string,
+): string {
     return fastify.jwt.sign({ userId, email });
 }

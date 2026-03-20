@@ -1,4 +1,4 @@
-import { type PoolClient } from 'pg';
+import type { PoolClient } from 'pg';
 
 export type Document = {
     id: string;
@@ -98,21 +98,28 @@ export async function getByUserID(client: PoolClient, userID: string) {
         [userID],
     );
 
-    return result.rows.map((row) => <Document>{
-        id: row.id,
-        userId: row.user_id,
-        fileName: row.file_name,
-        filePath: row.file_path,
-        fileSize: row.file_size || 0,
-        contentType: row.content_type,
-        status: row.status,
-        uploadedAt: row.uploaded_at?.toISOString() || undefined,
-        updatedAt: row.updated_at?.toISOString() || undefined,
-        createdAt: row.created_at?.toISOString() || '',
-    });
+    return result.rows.map(
+        (row) =>
+            <Document>{
+                id: row.id,
+                userId: row.user_id,
+                fileName: row.file_name,
+                filePath: row.file_path,
+                fileSize: row.file_size || 0,
+                contentType: row.content_type,
+                status: row.status,
+                uploadedAt: row.uploaded_at?.toISOString() || undefined,
+                updatedAt: row.updated_at?.toISOString() || undefined,
+                createdAt: row.created_at?.toISOString() || '',
+            },
+    );
 }
 
-export async function update(client: PoolClient, id: string, req: UpdateRequest) {
+export async function update(
+    client: PoolClient,
+    id: string,
+    req: UpdateRequest,
+) {
     let query = `UPDATE documents SET updated_at = NOW()`;
     const args: unknown[] = [];
     let argsNum = 0;

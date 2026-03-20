@@ -1,7 +1,7 @@
-import { Pool } from 'pg';
 import crypto from 'node:crypto';
-import { create, getByEmail, getByID, type User } from './user.db.ts';
 import argon2 from 'argon2';
+import type { Pool } from 'pg';
+import { create, getByEmail, getByID, type User } from './user.db.ts';
 
 const defaultMemory = 65536;
 const defaultThreads = 2;
@@ -9,7 +9,9 @@ const defaultThreads = 2;
 const pepper = (() => {
     const p = process.env['DATABASE_PEPPER'];
     if (!p || p.trim() === '') {
-        console.error('CRITICAL ERROR: DATABASE_PEPPER environment variable is not set.');
+        console.error(
+            'CRITICAL ERROR: DATABASE_PEPPER environment variable is not set.',
+        );
         process.exit(1);
     }
     return p;
@@ -36,10 +38,19 @@ export class Service {
     constructor(private db: Pool) {}
 
     async create(email: string, password: string): Promise<User> {
-        const { hash, salt, iterations, memory, threads } = await hashPassword(password);
+        const { hash, salt, iterations, memory, threads } =
+            await hashPassword(password);
         const client = await this.db.connect();
         try {
-            return await create(client, email, hash, salt, iterations, memory, threads);
+            return await create(
+                client,
+                email,
+                hash,
+                salt,
+                iterations,
+                memory,
+                threads,
+            );
         } finally {
             client.release();
         }
@@ -93,7 +104,10 @@ export class Service {
  * Returns the hash, salt, and iterations as requested.
  * Note: Memory and Parallelism are kept as internal constants.
  */
-export async function hashPassword(password: string, iterations: number = 3): Promise<HashPasswordResponse> {
+export async function hashPassword(
+    password: string,
+    iterations: number = 3,
+): Promise<HashPasswordResponse> {
     const salt = crypto.randomBytes(16);
 
     const memoryCost = defaultMemory;
@@ -117,7 +131,14 @@ export async function hashPassword(password: string, iterations: number = 3): Pr
     };
 }
 
-export async function verifyPassword({ password, salt, hash, iterations, memory, threads }: VerifyPasswordRequest) {
+export async function verifyPassword({
+    password,
+    salt,
+    hash,
+    iterations,
+    memory,
+    threads,
+}: VerifyPasswordRequest) {
     const saltBuffer = Buffer.from(salt, 'hex');
     const hashBuffer = Buffer.from(hash, 'hex');
 

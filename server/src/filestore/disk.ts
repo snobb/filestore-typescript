@@ -20,7 +20,10 @@ export class DiskFileStore implements FileStore {
         return path.join(this.baseDir, filePath);
     }
 
-    async save(filePath: string, data: AsyncIterable<Uint8Array>): Promise<FileInfo> {
+    async save(
+        filePath: string,
+        data: AsyncIterable<Uint8Array>,
+    ): Promise<FileInfo> {
         const fullPath = path.join(this.baseDir, filePath);
         const dirPath = path.dirname(fullPath);
 

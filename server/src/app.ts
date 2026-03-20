@@ -1,14 +1,16 @@
+import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
-import path from 'node:path';
 
 import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
-import { validatorCompiler, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
-
-import dbConnector from './dbconnector.ts';
+import {
+    serializerCompiler,
+    validatorCompiler,
+    type ZodTypeProvider,
+} from 'fastify-type-provider-zod';
 import authPlugin from './auth.ts';
+import dbConnector from './dbconnector.ts';
 import { documentRoutes } from './document/document.routes.ts';
 import { filestoreRoutes } from './filestore/filestore.routes.ts';
 import { userRoutes } from './user/user.routes.ts';
@@ -41,7 +43,7 @@ fastify.get('*', async (_request, reply) => {
     reply.sendFile('index.html');
 });
 
-fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
+fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
     if (err) {
         fastify.log.error(err);
         process.exit(1);

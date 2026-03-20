@@ -1,6 +1,6 @@
-import { type FastifyReply, type FastifyRequest } from 'fastify';
-import { Pool } from 'pg';
-import { type DocumentStatus, type UpdateRequest } from './document.db.ts';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { Pool } from 'pg';
+import type { DocumentStatus, UpdateRequest } from './document.db.ts';
 import { Service as DocumentService } from './document.service.ts';
 
 export type UploadPendingRequest = {
@@ -75,7 +75,13 @@ export async function uploadPendingHandler(
     try {
         const pg = getPool(request);
         const service = new DocumentService(pg);
-        const doc = await service.create(fileID, userID, file_name, storePath, content_type);
+        const doc = await service.create(
+            fileID,
+            userID,
+            file_name,
+            storePath,
+            content_type,
+        );
 
         reply.code(200).send(<UploadPendingResponse>{
             id: doc.id,
@@ -148,7 +154,10 @@ export async function updateDocumentStatusHandler(
     }
 }
 
-export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDocumentParams }>, reply: FastifyReply) {
+export async function getDocumentHandler(
+    request: FastifyRequest<{ Params: GetDocumentParams }>,
+    reply: FastifyReply,
+) {
     try {
         await request.server.authenticate(request, reply);
     } catch {
@@ -193,7 +202,10 @@ export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDo
     }
 }
 
-export async function listDocumentsHandler(request: FastifyRequest, reply: FastifyReply) {
+export async function listDocumentsHandler(
+    request: FastifyRequest,
+    reply: FastifyReply,
+) {
     try {
         await request.server.authenticate(request, reply);
     } catch {

@@ -1,4 +1,4 @@
-import { type FastifyInstance, type FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { DiskFileStore } from '../filestore/disk.ts';
 import {
@@ -20,7 +20,9 @@ import {
 import { Service as DocumentService } from './document.service.ts';
 
 const documentPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-    const fileStore = new DiskFileStore(process.env['FILE_STORAGE_PATH'] || '/filestore');
+    const fileStore = new DiskFileStore(
+        process.env['FILE_STORAGE_PATH'] || '/filestore',
+    );
     fastify.decorate('fileStore', fileStore);
     fastify.decorate('documentService', DocumentService);
 };

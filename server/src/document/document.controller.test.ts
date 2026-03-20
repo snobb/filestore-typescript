@@ -20,7 +20,10 @@ describe('document.controller', () => {
             pg: {},
             log: { error: mock.fn() },
             authenticate: async (request: any, reply: any) => {
-                const token = request.headers?.['authorization']?.replace('Bearer ', '');
+                const token = request.headers?.['authorization']?.replace(
+                    'Bearer ',
+                    '',
+                );
                 const userId = request.headers?.['x-user-id'];
                 if (!token && !userId) {
                     return reply.code(401).send({ error: 'unauthorized' });
@@ -34,14 +37,19 @@ describe('document.controller', () => {
         it('should return 401 if no user ID', async () => {
             const mockRequest: any = {
                 headers: {},
-                body: { file_name: 'test.pdf', content_type: 'application/pdf' },
+                body: {
+                    file_name: 'test.pdf',
+                    content_type: 'application/pdf',
+                },
                 server: mockServer,
             };
 
             await uploadPendingHandler(mockRequest, mockReply);
 
             assert.equal(mockReply.code.mock.calls[0]?.arguments[0], 401);
-            assert.deepEqual(mockReply.send.mock.calls[0]?.arguments[0], { error: 'unauthorized' });
+            assert.deepEqual(mockReply.send.mock.calls[0]?.arguments[0], {
+                error: 'unauthorized',
+            });
         });
 
         it('should return 400 if no file_name', async () => {
@@ -59,7 +67,10 @@ describe('document.controller', () => {
         it('should reject path traversal in file_name', async () => {
             const mockRequest: any = {
                 headers: { 'x-user-id': 'user-uuid' },
-                body: { file_name: '../etc/passwd', content_type: 'application/pdf' },
+                body: {
+                    file_name: '../etc/passwd',
+                    content_type: 'application/pdf',
+                },
                 server: mockServer,
             };
 
@@ -71,7 +82,10 @@ describe('document.controller', () => {
         it('should return 400 if file_name contains ..', async () => {
             const mockRequest: any = {
                 headers: { 'x-user-id': 'user-uuid' },
-                body: { file_name: '../etc/passwd', content_type: 'application/pdf' },
+                body: {
+                    file_name: '../etc/passwd',
+                    content_type: 'application/pdf',
+                },
                 server: mockServer,
             };
 
@@ -102,7 +116,10 @@ describe('document.controller', () => {
 
             const mockRequest: any = {
                 headers: { 'x-user-id': 'user-uuid' },
-                body: { file_name: 'test.pdf', content_type: 'application/pdf' },
+                body: {
+                    file_name: 'test.pdf',
+                    content_type: 'application/pdf',
+                },
                 server: mockServer,
             };
 
@@ -197,7 +214,11 @@ describe('document.controller', () => {
             const mockRequest: any = {
                 headers: { 'x-user-id': 'user-uuid' },
                 params: { id: 'doc-uuid' },
-                body: { status: 'uploaded', file_size: 100, checksum: 'abc123' },
+                body: {
+                    status: 'uploaded',
+                    file_size: 100,
+                    checksum: 'abc123',
+                },
                 server: mockServer,
             };
 

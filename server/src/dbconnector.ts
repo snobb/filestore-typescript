@@ -1,5 +1,5 @@
 import fastifyPostgres from '@fastify/postgres';
-import { type FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 
 /**

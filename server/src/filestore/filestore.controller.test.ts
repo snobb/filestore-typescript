@@ -1,10 +1,15 @@
-import * as fs from 'fs/promises';
 import assert from 'node:assert';
 import { beforeEach, describe, it, mock } from 'node:test';
+import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 import { DiskFileStore } from './disk.ts';
-import { DOWNLOAD_PREFIX, downloadHandler, UPLOAD_PREFIX, uploadHandler } from './filestore.controller.ts';
+import {
+    DOWNLOAD_PREFIX,
+    downloadHandler,
+    UPLOAD_PREFIX,
+    uploadHandler,
+} from './filestore.controller.ts';
 
 describe('filestore.controller', () => {
     let mockReply: any;
@@ -35,7 +40,9 @@ describe('filestore.controller', () => {
             await uploadHandler(mockRequest, mockReply);
 
             assert.equal(mockReply.code.mock.calls[0]?.arguments[0], 400);
-            assert.deepEqual(mockReply.send.mock.calls[0]?.arguments[0], { error: 'path required' });
+            assert.deepEqual(mockReply.send.mock.calls[0]?.arguments[0], {
+                error: 'path required',
+            });
         });
 
         it('should save file and return info', async () => {
@@ -98,7 +105,9 @@ describe('filestore.controller', () => {
             await downloadHandler(mockRequest, mockReply);
 
             assert.equal(mockReply.code.mock.calls[0]?.arguments[0], 404);
-            assert.deepEqual(mockReply.send.mock.calls[0]?.arguments[0], { error: 'file not found' });
+            assert.deepEqual(mockReply.send.mock.calls[0]?.arguments[0], {
+                error: 'file not found',
+            });
         });
 
         it('should return file if exists', async () => {
@@ -112,7 +121,10 @@ describe('filestore.controller', () => {
 
             await downloadHandler(mockRequest, mockReply);
 
-            assert.equal(mockReply.header.mock.calls[0]?.arguments[0], 'Content-Type');
+            assert.equal(
+                mockReply.header.mock.calls[0]?.arguments[0],
+                'Content-Type',
+            );
         });
 
         it('should decode URI components in path', async () => {
@@ -127,7 +139,10 @@ describe('filestore.controller', () => {
 
             await downloadHandler(mockRequest, mockReply);
 
-            assert.equal(mockReply.header.mock.calls[0]?.arguments[0], 'Content-Type');
+            assert.equal(
+                mockReply.header.mock.calls[0]?.arguments[0],
+                'Content-Type',
+            );
         });
     });
 });

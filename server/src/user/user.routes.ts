@@ -1,6 +1,11 @@
-import { type FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { loginHandler, registerHandler } from './user.controller.ts';
-import { registerRequestSchema, loginRequestSchema, authResponseSchema, errorSchema } from './user.schema.ts';
+import {
+    authResponseSchema,
+    errorSchema,
+    loginRequestSchema,
+    registerRequestSchema,
+} from './user.schema.ts';
 
 export async function userRoutes(server: FastifyInstance) {
     server.post(
