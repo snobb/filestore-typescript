@@ -83,11 +83,14 @@ describe('document.controller', () => {
         it('should create document and return upload URL', async () => {
             const mockDoc = {
                 id: 'doc-uuid',
-                user_id: 'user-uuid',
                 file_name: 'test.pdf',
                 file_path: 'user-uuid/doc-uuid_test.pdf',
                 content_type: 'application/pdf',
+                file_size: 0,
                 status: 'pending',
+                uploaded_at: null,
+                updated_at: new Date('2024-01-01'),
+                created_at: new Date('2024-01-01'),
             };
 
             mockServer.pg.connect = mock.fn(() =>
@@ -172,10 +175,19 @@ describe('document.controller', () => {
         });
 
         it('should update document status', async () => {
-            let queryCallCount = 0;
             mockServer.pg.connect = mock.fn(() => {
-                queryCallCount++;
-                const mockDoc = { id: 'doc-uuid', user_id: 'user-uuid', status: 'pending' };
+                const mockDoc = {
+                    id: 'doc-uuid',
+                    user_id: 'user-uuid',
+                    file_name: 'test.pdf',
+                    file_path: '/user/test.pdf',
+                    content_type: 'application/pdf',
+                    file_size: 100,
+                    status: 'pending',
+                    uploaded_at: null,
+                    updated_at: new Date('2024-01-01'),
+                    created_at: new Date('2024-01-01'),
+                };
                 return Promise.resolve({
                     query: mock.fn(() => Promise.resolve({ rows: [mockDoc] })),
                     release: mock.fn(),

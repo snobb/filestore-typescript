@@ -4,8 +4,8 @@ import * as path from 'path';
 
 export type FileInfo = {
     path: string;
-    check_sum: string;
-    file_size: number;
+    checksum: string;
+    fileSize: number;
 };
 
 export type FileStore = {
@@ -43,8 +43,8 @@ export class DiskFileStore implements FileStore {
 
         return {
             path: filePath,
-            check_sum: hash.digest('hex'),
-            file_size: totalSize,
+            checksum: hash.digest('hex'),
+            fileSize: totalSize,
         };
     }
 }

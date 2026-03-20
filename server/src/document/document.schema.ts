@@ -7,13 +7,13 @@ export const uploadPendingRequestSchema = z.object({
 
 export const uploadPendingResponseSchema = z.object({
     id: z.uuid(),
-    upload_url: z.url(),
-    status_url: z.url(),
+    upload_url: z.string(),
+    status_url: z.string(),
 });
 
 export const updateStatusRequestSchema = z.object({
-    path: z.string(),
-    check_sum: z.regex(/^[a-fA-F0-9]+$/),
+    status: z.enum(['pending', 'uploaded', 'verified']),
+    checksum: z.string().regex(/^[a-fA-F0-9]+$/), // hex
     file_size: z.number(),
 });
 
@@ -24,9 +24,9 @@ export const updateStatusResponseSchema = z.object({
     file_path: z.string(),
     file_size: z.number(),
     content_type: z.string(),
-    checksum: z.regex(/^[a-fA-F0-9]+$/),
+    checksum: z.string(),
     status: z.enum(['pending', 'uploaded', 'verified']),
-    uploaded_at: z.string(),
+    uploaded_at: z.string().nullish(),
     updated_at: z.string(),
     created_at: z.string(),
 });
@@ -46,10 +46,10 @@ export const getDocumentResponseSchema = z.object({
     file_path: z.string(),
     file_size: z.number(),
     content_type: z.string(),
-    checksum: z.string().optional(),
+    checksum: z.string().nullish(),
     status: z.enum(['pending', 'uploaded', 'verified']),
-    uploaded_at: z.string().optional(),
-    updated_at: z.string().optional(),
+    uploaded_at: z.string().nullish(),
+    updated_at: z.string().nullish(),
     created_at: z.string(),
 });
 

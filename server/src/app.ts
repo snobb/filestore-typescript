@@ -1,13 +1,17 @@
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+import path from 'node:path';
+
 import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
-import path from 'path';
+import { validatorCompiler, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
+
 import dbConnector from './dbconnector.ts';
 import authPlugin from './auth.ts';
 import { documentRoutes } from './document/document.routes.ts';
 import { filestoreRoutes } from './filestore/filestore.routes.ts';
 import { userRoutes } from './user/user.routes.ts';
-import { validatorCompiler, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 
 const fastify = Fastify({ logger: true });
 
@@ -24,8 +28,10 @@ fastify.withTypeProvider<ZodTypeProvider>();
 fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
 
+const currDir = dirname(fileURLToPath(import.meta.url));
+
 fastify.register(fastifyStatic, {
-    root: path.resolve(__dirname, '../../client/dist'),
+    root: path.resolve(currDir, '../../client/dist'),
     prefix: '/',
     wildcard: false,
     index: ['index.html'],

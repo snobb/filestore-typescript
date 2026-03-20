@@ -17,8 +17,8 @@ describe('document.db', () => {
                                 file_size: 0,
                                 status: 'pending',
                                 uploaded_at: null,
-                                updated_at: null,
-                                created_at: '2024-01-01',
+                                updated_at: new Date('2024-01-01'),
+                                created_at: new Date('2024-01-01'),
                             },
                         ],
                     }),
@@ -35,10 +35,10 @@ describe('document.db', () => {
             );
 
             assert.equal(result.id, 'test-uuid');
-            assert.equal(result.file_name, 'test.pdf');
+            assert.equal(result.fileName, 'test.pdf');
             assert.equal(result.status, 'pending');
-            assert.equal(result.user_id, 'user-uuid');
-            assert.equal(result.content_type, 'application/pdf');
+            assert.equal(result.userId, 'user-uuid');
+            assert.equal(result.contentType, 'application/pdf');
         });
     });
 
@@ -57,7 +57,7 @@ describe('document.db', () => {
                                 file_size: 100,
                                 status: 'pending',
                                 uploaded_at: null,
-                                updated_at: null,
+                                updated_at: new Date('2024-01-01'),
                             },
                         ],
                     }),
@@ -67,8 +67,8 @@ describe('document.db', () => {
             const result = await getByID(mockClient as any, 'doc-uuid');
 
             assert.equal(result?.id, 'doc-uuid');
-            assert.equal(result?.user_id, 'user-uuid');
-            assert.equal(result?.file_size, 100);
+            assert.equal(result?.userId, 'user-uuid');
+            assert.equal(result?.fileSize, 100);
         });
 
         it('should return null when not found', async () => {
@@ -96,7 +96,8 @@ describe('document.db', () => {
                                 file_size: 100,
                                 status: 'pending',
                                 uploaded_at: null,
-                                updated_at: null,
+                                updated_at: new Date('2024-01-01'),
+                                created_at: new Date('2024-01-01'),
                             },
                             {
                                 id: 'doc-2',
@@ -106,8 +107,9 @@ describe('document.db', () => {
                                 content_type: 'application/pdf',
                                 file_size: 200,
                                 status: 'uploaded',
-                                uploaded_at: '2024-01-01',
-                                updated_at: null,
+                                uploaded_at: new Date('2024-01-01'),
+                                updated_at: new Date('2024-01-01'),
+                                created_at: new Date('2024-01-01'),
                             },
                         ],
                     }),
@@ -138,8 +140,8 @@ describe('document.db', () => {
                                 checksum: 'abc123',
                                 status: 'uploaded',
                                 uploaded_at: null,
-                                updated_at: '2024-01-02',
-                                created_at: '2024-01-01',
+                                updated_at: new Date('2024-01-02'),
+                                created_at: new Date('2024-01-01'),
                             },
                         ],
                     }),
@@ -169,8 +171,8 @@ describe('document.db', () => {
                                 checksum: 'def456',
                                 status: 'verified',
                                 uploaded_at: null,
-                                updated_at: '2024-01-02',
-                                created_at: '2024-01-01',
+                                updated_at: new Date('2024-01-02'),
+                                created_at: new Date('2024-01-01'),
                             },
                         ],
                     }),
@@ -184,7 +186,7 @@ describe('document.db', () => {
             });
 
             assert.equal(result.status, 'verified');
-            assert.equal(result.file_size, 500);
+            assert.equal(result.fileSize, 500);
             assert.equal(result.checksum, 'def456');
         });
     });

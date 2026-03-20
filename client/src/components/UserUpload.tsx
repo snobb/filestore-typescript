@@ -58,7 +58,7 @@ export function UserUpload() {
         status_url,
         "uploaded",
         fileInfo.file_size,
-        fileInfo.check_sum,
+        fileInfo.checksum,
       );
 
       setSuccess(true);

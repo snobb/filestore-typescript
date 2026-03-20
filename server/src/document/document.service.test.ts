@@ -7,12 +7,13 @@ describe('document.service', () => {
         it('should create document and return result', async () => {
             const mockDoc = {
                 id: 'test-uuid',
-                user_id: 'user-uuid',
                 file_name: 'test.pdf',
                 file_path: '/user/test.pdf',
                 content_type: 'application/pdf',
                 file_size: 0,
                 status: 'pending',
+                updated_at: new Date('2024-01-01'),
+                created_at: new Date('2024-01-01'),
             };
 
             const mockPool = {
@@ -40,7 +41,17 @@ describe('document.service', () => {
 
     describe('getByID', () => {
         it('should return document when found', async () => {
-            const mockDoc = { id: 'doc-uuid', user_id: 'user-uuid' };
+            const mockDoc = {
+                id: 'doc-uuid',
+                user_id: 'user-uuid',
+                file_name: 'test.pdf',
+                file_path: '/user/test.pdf',
+                content_type: 'application/pdf',
+                file_size: 100,
+                status: 'pending',
+                uploaded_at: null,
+                updated_at: new Date('2024-01-01'),
+            };
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({
@@ -92,8 +103,30 @@ describe('document.service', () => {
     describe('getByUserID', () => {
         it('should return all documents for user', async () => {
             const mockDocs = [
-                { id: 'doc-1', user_id: 'user-uuid' },
-                { id: 'doc-2', user_id: 'user-uuid' },
+                {
+                    id: 'doc-1',
+                    user_id: 'user-uuid',
+                    file_name: 'test1.pdf',
+                    file_path: '/user/test1.pdf',
+                    content_type: 'application/pdf',
+                    file_size: 100,
+                    status: 'pending',
+                    uploaded_at: null,
+                    updated_at: new Date('2024-01-01'),
+                    created_at: new Date('2024-01-01'),
+                },
+                {
+                    id: 'doc-2',
+                    user_id: 'user-uuid',
+                    file_name: 'test2.pdf',
+                    file_path: '/user/test2.pdf',
+                    content_type: 'application/pdf',
+                    file_size: 200,
+                    status: 'uploaded',
+                    uploaded_at: new Date('2024-01-01'),
+                    updated_at: new Date('2024-01-01'),
+                    created_at: new Date('2024-01-01'),
+                },
             ];
             const mockPool = {
                 connect: mock.fn(() =>
@@ -113,7 +146,19 @@ describe('document.service', () => {
 
     describe('update', () => {
         it('should update and return document', async () => {
-            const mockDoc = { id: 'doc-uuid', status: 'uploaded' };
+            const mockDoc = {
+                id: 'doc-uuid',
+                status: 'uploaded',
+                user_id: 'user-uuid',
+                file_name: 'test.pdf',
+                file_path: '/user/test.pdf',
+                content_type: 'application/pdf',
+                file_size: 100,
+                checksum: 'abc123',
+                uploaded_at: null,
+                updated_at: new Date('2024-01-02'),
+                created_at: new Date('2024-01-01'),
+            };
             const mockPool = {
                 connect: mock.fn(() =>
                     Promise.resolve({

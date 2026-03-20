@@ -3,11 +3,6 @@ import { loginHandler, registerHandler } from './user.controller.ts';
 import { registerRequestSchema, loginRequestSchema, authResponseSchema, errorSchema } from './user.schema.ts';
 
 export async function userRoutes(server: FastifyInstance) {
-    server.addSchema(registerRequestSchema);
-    server.addSchema(loginRequestSchema);
-    server.addSchema(authResponseSchema);
-    server.addSchema(errorSchema);
-
     server.post(
         '/api/auth/register',
         {

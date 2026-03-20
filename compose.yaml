@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: filestore
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - pgdata:/var/lib/postgresql/data/pgdata
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d filestore"]
       interval: 5s
@@ -32,3 +34,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+volumes:
+  pgdata:

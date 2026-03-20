@@ -28,15 +28,6 @@ const documentPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 export default fp(documentPlugin);
 
 export async function documentRoutes(server: FastifyInstance) {
-    server.addSchema(uploadPendingRequestSchema);
-    server.addSchema(uploadPendingResponseSchema);
-    server.addSchema(updateStatusRequestSchema);
-    server.addSchema(updateStatusResponseSchema);
-    server.addSchema(errorSchema);
-    server.addSchema(getDocumentParamsSchema);
-    server.addSchema(getDocumentResponseSchema);
-    server.addSchema(listDocumentsResponseSchema);
-
     await server.register(documentPlugin);
 
     server.post(

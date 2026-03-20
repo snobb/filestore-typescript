@@ -30,8 +30,8 @@ describe('disk.ts', () => {
             const result = await store.save('test.txt', data);
 
             assert.equal(result.path, 'test.txt');
-            assert.equal(result.file_size, 11);
-            assert.equal(result.check_sum.length, 64);
+            assert.equal(result.fileSize, 11);
+            assert.equal(result.checksum.length, 64);
 
             const content = await fs.readFile(path.join(tempDir, 'test.txt'));
             assert.equal(content.toString(), 'hello world');
@@ -60,7 +60,7 @@ describe('disk.ts', () => {
             const result = await store.save('checksum.txt', data);
 
             const expectedChecksum = '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824';
-            assert.equal(result.check_sum, expectedChecksum);
+            assert.equal(result.checksum, expectedChecksum);
         });
 
         it('should handle multiple chunks', async () => {
@@ -74,7 +74,7 @@ describe('disk.ts', () => {
 
             const result = await store.save('multi.txt', data);
 
-            assert.equal(result.file_size, 18);
+            assert.equal(result.fileSize, 18);
 
             const content = await fs.readFile(path.join(tempDir, 'multi.txt'));
             assert.equal(content.toString(), 'chunk1chunk2chunk3');

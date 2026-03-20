@@ -14,7 +14,7 @@ export type LoginRequest = {
 };
 
 export type AuthResponse = {
-    user_id: string;
+    userId: string;
     email: string;
 };
 
@@ -61,7 +61,7 @@ export async function registerHandler(request: FastifyRequest<{ Body: RegisterRe
         setAuthCookie(reply, token);
 
         const response: AuthResponse = {
-            user_id: user.id,
+            userId: user.id,
             email: user.email,
         };
 
@@ -91,7 +91,7 @@ export async function loginHandler(request: FastifyRequest<{ Body: LoginRequest 
         const token = generateToken(request.server, user.id, user.email);
         setAuthCookie(reply, token);
 
-        const response: AuthResponse = {
+        const response = {
             user_id: user.id,
             email: user.email,
         };

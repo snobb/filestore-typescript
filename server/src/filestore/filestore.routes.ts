@@ -16,9 +16,6 @@ const filestorePlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => 
 export default fp(filestorePlugin);
 
 export async function filestoreRoutes(server: FastifyInstance) {
-    server.addSchema(filestoreFileInfoSchema);
-    server.addSchema(errorSchema);
-
     await server.register(filestorePlugin);
 
     server.post(

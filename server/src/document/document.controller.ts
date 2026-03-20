@@ -20,6 +20,20 @@ export type UpdateStatusRequest = {
     checksum: string;
 };
 
+export type DocumentResponse = {
+    id: string;
+    user_id: string;
+    file_name: string;
+    file_path: string;
+    file_size: number;
+    content_type: string;
+    checksum: string;
+    status: string;
+    uploaded_at: string | null;
+    updated_at: string;
+    created_at: string;
+};
+
 export type GetDocumentParams = {
     id: string;
 };
@@ -63,13 +77,11 @@ export async function uploadPendingHandler(
         const service = new DocumentService(pg);
         const doc = await service.create(fileID, userID, file_name, storePath, content_type);
 
-        const response: UploadPendingResponse = {
+        reply.code(200).send(<UploadPendingResponse>{
             id: doc.id,
             upload_url: uploadPath,
             status_url: `/api/documents/${doc.id}/status`,
-        };
-
-        reply.code(200).send(response);
+        });
     } catch (err) {
         request.server.log.error(err);
         return sendError(reply, 500, 'unable to write to db');
@@ -105,7 +117,7 @@ export async function updateDocumentStatusHandler(
             return sendError(reply, 404, 'document not found');
         }
 
-        if (doc.user_id !== userID) {
+        if (doc.userId !== userID) {
             return sendError(reply, 403, 'access denied');
         }
 
@@ -117,7 +129,19 @@ export async function updateDocumentStatusHandler(
 
         const updatedDoc = await service.update(id, updateReq);
 
-        reply.code(200).send(updatedDoc);
+        reply.code(200).send(<DocumentResponse>{
+            id: updatedDoc.id,
+            user_id: updatedDoc.userId,
+            status: updatedDoc.status,
+            file_size: updatedDoc.fileSize,
+            checksum: updatedDoc.checksum,
+            file_path: updatedDoc.filePath,
+            file_name: updatedDoc.fileName,
+            content_type: updatedDoc.contentType,
+            created_at: updatedDoc.createdAt,
+            updated_at: updatedDoc.updatedAt,
+            uploaded_at: updatedDoc.uploadedAt,
+        });
     } catch (err) {
         request.server.log.error(err);
         return sendError(reply, 500, 'unable to update document');
@@ -146,11 +170,23 @@ export async function getDocumentHandler(request: FastifyRequest<{ Params: GetDo
             return sendError(reply, 404, 'document not found');
         }
 
-        if (doc.user_id !== userID) {
+        if (doc.userId !== userID) {
             return sendError(reply, 403, 'access denied');
         }
 
-        reply.code(200).send(doc);
+        reply.code(200).send(<DocumentResponse>{
+            id: doc.id,
+            user_id: doc.userId,
+            status: doc.status,
+            file_size: doc.fileSize,
+            checksum: doc.checksum,
+            file_path: doc.filePath,
+            file_name: doc.fileName,
+            content_type: doc.contentType,
+            created_at: doc.createdAt,
+            updated_at: doc.updatedAt,
+            uploaded_at: doc.uploadedAt,
+        });
     } catch (err) {
         request.server.log.error(err);
         return sendError(reply, 500, 'document not found');
@@ -174,7 +210,23 @@ export async function listDocumentsHandler(request: FastifyRequest, reply: Fasti
 
     try {
         const docs = await service.getByUserID(userID);
-        reply.code(200).send(docs || []);
+        reply.code(200).send(
+            docs.map((doc) => {
+                return <DocumentResponse>{
+                    id: doc.id,
+                    user_id: doc.userId,
+                    status: doc.status,
+                    file_size: doc.fileSize,
+                    checksum: doc.checksum,
+                    file_path: doc.filePath,
+                    file_name: doc.fileName,
+                    content_type: doc.contentType,
+                    created_at: doc.createdAt,
+                    updated_at: doc.updatedAt,
+                    uploaded_at: doc.uploadedAt,
+                };
+            }),
+        );
     } catch (err) {
         request.server.log.error(err);
         return sendError(reply, 500, 'unable to load documents');

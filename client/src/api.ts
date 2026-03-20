@@ -25,7 +25,7 @@ export interface UploadPendingResponse {
 
 export interface FileInfo {
   path: string;
-  check_sum: string;
+  checksum: string;
   file_size: number;
 }
 
@@ -39,7 +39,7 @@ export async function requestRaw<T>(
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` }),
+      ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
   });
@@ -59,7 +59,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` }),
+      ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
   });
@@ -91,12 +91,12 @@ export async function uploadPending(
 }
 
 export async function updateDocumentStatus(
-  status_url: string,
+  statusUrl: string,
   status: string,
   fileSize: number,
   checksum: string,
 ): Promise<Document> {
-  return request<Document>(status_url, {
+  return request<Document>(statusUrl, {
     method: "PATCH",
     body: JSON.stringify({ status, file_size: fileSize, checksum }),
   });
@@ -111,7 +111,7 @@ export async function uploadFile(
   const response = await fetch(`${API_BASE}${uploadUrl}`, {
     method: "POST",
     headers: {
-      ...(token && { "Authorization": `Bearer ${token}` }),
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: file,
   });
