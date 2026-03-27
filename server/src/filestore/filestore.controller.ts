@@ -1,6 +1,6 @@
+import * as fs from 'node:fs';
 import type { Readable } from 'node:stream';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import * as fs from 'fs';
 
 export const UPLOAD_PREFIX = '/file_store/uploads';
 export const DOWNLOAD_PREFIX = '/file_store/downloads';
