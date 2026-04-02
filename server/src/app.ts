@@ -1,4 +1,5 @@
 import path, { dirname } from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 import fastifyMultipart from '@fastify/multipart';
@@ -39,7 +40,7 @@ fastify.register(fastifyStatic, {
     index: ['index.html'],
 });
 
-fastify.get('*', async (_request, reply) => {
+fastify.get('*', (_request, reply) => {
     reply.sendFile('index.html');
 });
 
