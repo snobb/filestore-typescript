@@ -13,11 +13,6 @@ export type LoginRequest = {
     password: string;
 };
 
-export type AuthResponse = {
-    userId: string;
-    email: string;
-};
-
 function getPool(request: FastifyRequest): Pool {
     return request.server.pg as unknown as Pool;
 }
@@ -63,12 +58,10 @@ export async function registerHandler(
         const token = generateToken(request.server, user.id, user.email);
         setAuthCookie(reply, token);
 
-        const response: AuthResponse = {
-            userId: user.id,
+        reply.code(201).send({
+            user_id: user.id,
             email: user.email,
-        };
-
-        reply.code(201).send(response);
+        });
     } catch (err) {
         request.server.log.error(err);
         return sendError(reply, 500, 'unable to create user');
@@ -97,12 +90,10 @@ export async function loginHandler(
         const token = generateToken(request.server, user.id, user.email);
         setAuthCookie(reply, token);
 
-        const response = {
+        reply.code(200).send({
             user_id: user.id,
             email: user.email,
-        };
-
-        reply.code(200).send(response);
+        });
     } catch (err) {
         request.server.log.error(err);
         return sendError(reply, 500, 'unable to authenticate');
